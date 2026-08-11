@@ -1,7 +1,6 @@
 // 小鲸鱼助手 LittleWhale —— Popup 逻辑
 // ① API Key：粘贴即自动保存（防抖 600ms），可切换「安全模式」（仅内存）
 // ② 模型设置：模型 + 智能水平（reasoning_effort），修改即自动保存
-// （TapTap 链接工具已拆分至独立插件 taptap-maker-plugin/）
 
 const $ = (id) => document.getElementById(id);
 

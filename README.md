@@ -1,46 +1,114 @@
-# 小鲸鱼助手 LittleWhale（DeepSeek 选中翻译与解读）
+<div align="center">
 
-基于 Manifest V3 的 Chrome 扩展，小鲸鱼（DeepSeek 的虎鲸 IP）帮你把选中的内容读透。
+# 🐋 LittleWhale 小鲸鱼助手
 
-## 功能：选中文本 → 翻译 / 解读
+**Translate & interpret any selected text on the web with DeepSeek**
 
-- 在任意网页上用鼠标选中文字（或 `Shift + 方向键` 选中），选区旁会浮出 **翻译** / **解读** 两个按钮。
-- 点击后通过后台 Service Worker 调用 **DeepSeek API**，结果在浮窗中展示，支持滚动、复制、关闭。
-- 翻译：输出简体中文译文；解读：输出核心观点、背景信息、关键细节。
-- **默认模型 `deepseek-v4-flash`，智能水平（`reasoning_effort`）默认 `max`**；均可在弹窗「模型设置」中修改，修改自动保存。
-- API Key 只保存在 `chrome.storage.local`（本机浏览器）或安全模式下的内存中，由后台请求，不会暴露给网页。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/zhaotianyi-source/littlewhale-extension)](https://github.com/zhaotianyi-source/littlewhale-extension/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/zhaotianyi-source/littlewhale-extension/ci.yml?branch=main)](https://github.com/zhaotianyi-source/littlewhale-extension/actions)
 
-## 安装
+[English](README.md) | [简体中文](README.zh-CN.md)
 
-1. 打开 Chrome，访问 `chrome://extensions/`
-2. 打开右上角 **开发者模式**
-3. 点击 **加载已解压的扩展程序**，选择本目录（`ChromePlug`）
-4. 点击工具栏中的扩展图标，在弹窗中粘贴 DeepSeek API Key（自动保存）并测试连接
+</div>
 
-## 目录结构
+A Chrome extension (Manifest V3) powered by the DeepSeek API. Select any text on any webpage, and a floating toolbar appears with **Translate** and **Interpret** actions — no copy-paste, no switching tabs. The little whale (DeepSeek's orca) reads it for you.
 
+## ✨ Features
+
+- **Select → Act**: select text with your mouse (or `Shift + Arrow keys`), a floating toolbar appears right next to the selection.
+- **Translate**: outputs a polished Simplified Chinese translation of the selected text.
+- **Interpret**: explains the selection — core ideas, background, key details and takeaways.
+- **Configurable model**: defaults to `deepseek-v4-flash` with `reasoning_effort=max` (deepest thinking); switch model & effort anytime in the popup.
+- **Private by design**: your API key is stored locally only, never exposed to web pages; optional "Safe Mode" keeps it in memory (not on disk).
+- **Result panel**: scrollable, copyable, dismissible with `Esc`.
+
+## 📸 Screenshots
+
+_Coming soon — add your screenshots to `docs/screenshots/` and reference them here (e.g. `docs/screenshots/selection.png`, `docs/screenshots/popup.png`)._
+
+## 📦 Installation
+
+**Requirements**: Chrome (or Chromium-based browser) ≥ 102 (uses `chrome.storage.session`).
+
+1. Open `chrome://extensions/`
+2. Enable **Developer mode** (top-right corner)
+3. Click **Load unpacked** and select this repository folder
+4. Click the extension icon in the toolbar → paste your DeepSeek API key (auto-saved) → **Test connection** → done.
+
+> Get an API key at [platform.deepseek.com](https://platform.deepseek.com).
+
+## 🚀 Usage
+
+1. Open any webpage and select some text.
+2. Click **翻译 / Translate** or **解读 / Interpret** on the floating toolbar.
+3. Read the result in the popup panel — copy it or close with the ✕ button / `Esc`.
+
+## ⚙️ Configuration
+
+Open the extension popup:
+
+| Setting | Description | Default |
+|---|---|---|
+| API Key | Your DeepSeek API key (`sk-...`). Auto-saved on paste. | — |
+| Safe Mode | Keep the key in memory only, never written to disk (re-enter after browser restart). | off |
+| Model | Any DeepSeek model id, e.g. `deepseek-v4-flash`, `deepseek-v4-pro`, `deepseek-chat` | `deepseek-v4-flash` |
+| Intelligence | `reasoning_effort`: `max` / `high` / `low` (v4 models keep thinking mode on) | `max` |
+
+## 🔒 Privacy & Security
+
+- **Storage**: the API key is stored in `chrome.storage.local` (your local Chrome profile, plaintext, never synced to any cloud account). With **Safe Mode** enabled it lives only in memory (`chrome.storage.session`) and is wiped on browser restart.
+- **Network**: the key is sent **only** to `https://api.deepseek.com` as an `Authorization` header (`host_permissions` is scoped to that origin). Nothing is sent to any other site.
+- **Isolation**: web pages cannot access extension storage or trigger extension requests; other extensions are isolated per extension ID. The content script never reads your key.
+- **No tracking**: no analytics, no telemetry, no third-party requests of any kind.
+- **Advice**: review your usage at platform.deepseek.com regularly; if you suspect a leak, revoke and rotate the key. Enable disk encryption (FileVault) to protect the at-rest profile.
+
+## ❓ FAQ
+
+<details>
+<summary><b>Why do I get "API key not configured"?</b></summary>
+
+Open the extension popup and paste your key — it auto-saves (you'll see `已保存 / Saved: sk-****xxxx`). Then retry.
+</details>
+
+<details>
+<summary><b>How do I change the model / intelligence level?</b></summary>
+
+Open the popup → **Model settings**: edit the model id and pick an intelligence level. Changes auto-save.
+</details>
+
+<details>
+<summary><b>Selection works but no toolbar appears?</b></summary>
+
+The content script runs in the top frame only. On pages where the text lives inside an iframe (e.g. embedded documents), the toolbar may not appear — a known limitation.
+</details>
+
+<details>
+<summary><b>Is my API key sent to TapTap or other sites?</b></summary>
+
+No. The key is only ever sent to `api.deepseek.com`.
+</details>
+
+<details>
+<summary><b>Error: HTTP 401 / 429 / 400?</b></summary>
+
+`401` — invalid or revoked key. `429` — rate limit or insufficient balance. `400 model not found` — typo in the model id. Check the popup's error message for details.
+</details>
+
+## 🛠 Development
+
+```bash
+npm install     # install dev dependencies (jsdom)
+npm run check   # syntax-check all extension JS files
+npm test        # run UI regression tests (jsdom)
 ```
-ChromePlug/
-├── manifest.json      # MV3 声明
-├── background.js      # Service Worker：DeepSeek API 调用
-├── content.js         # 选中文本浮出工具栏 + 结果浮窗
-├── content.css        # 注入页面的 UI 样式
-├── popup.html         # 弹窗页面（API Key 配置 + 模型设置）
-├── popup.js           # 弹窗逻辑
-└── icons/             # 扩展图标（16/32/48/128）
-```
 
-## 安全说明
+The regression suite (`tests/content-ui.test.js`) simulates the selection → toolbar → result flow and guards against visibility regressions. CI runs all checks on every push and PR.
 
-- **存储**：默认将 API Key 存在 `chrome.storage.local`（本机 Chrome 配置目录，明文，不会同步到 Google 账户）。勾选弹窗中的「安全模式」后，Key 只保存在内存（`chrome.storage.session`），**不写入磁盘**，浏览器重启后需重新输入。
-- **网络**：Key 仅作为 `Authorization` 头发往 `https://api.deepseek.com`（`host_permissions` 已限定），不会发给任何其它站点。
-- **隔离**：网页 JS 无法访问扩展存储、无法触发扩展请求；其它扩展按扩展 ID 隔离。content script 从不读取 Key。
-- **建议**：定期在 [platform.deepseek.com](https://platform.deepseek.com) 查看用量；怀疑泄露时直接吊销并重新生成 Key；本机开启 FileVault/磁盘加密可降低静态文件被读取的风险。
+## 🤝 Contributing
 
-## 说明
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first. Found a bug or have an idea? Open an [issue](https://github.com/zhaotianyi-source/littlewhale-extension/issues).
 
-- API Key 在 [platform.deepseek.com](https://platform.deepseek.com) 创建，**粘贴到弹窗后会自动保存**（也可点「立即保存」），保存后弹窗会显示已保存状态。
-- 模型与智能水平在弹窗「模型设置」中修改：`reasoning_effort` 可选 `max / high / low`（v4 系列模型思考模式默认开启）。
-- 选中功能运行在页面主框架；若某些网站（如 iframe 内嵌文档）不生效，属正常限制。
-- 超长文本会被截断到 20000 字符再发送。
-- 常见错误提示：`HTTP 401`（Key 无效）、`HTTP 429`（额度/频率限制）、`400 模型不存在`（模型名拼写有误）、未配置 Key 时会在浮窗提示去弹窗配置。
+## 📄 License
+
+[MIT](LICENSE) © [zhaotianyi-source](https://github.com/zhaotianyi-source)

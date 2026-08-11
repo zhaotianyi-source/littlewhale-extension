@@ -1,0 +1,13 @@
+{
+  "name": "littlewhale-extension",
+  "version": "1.2.0",
+  "description": "LittleWhale 小鲸鱼助手：选中网页文本调用 DeepSeek 翻译与解读的 Chrome 扩展",
+  "private": true,
+  "scripts": {
+    "check": "node --check background.js && node --check content.js && node --check popup.js && node -e \"JSON.parse(require('fs').readFileSync('manifest.json','utf8')); console.log('manifest.json OK')\"",
+    "test": "node tests/content-ui.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0"
+  }
+}
