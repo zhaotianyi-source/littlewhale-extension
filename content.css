@@ -1,0 +1,212 @@
+/* DeepSeek 助手 —— 注入页面的 UI 样式 */
+.dsh-ui {
+  all: initial;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1f2329;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dsh-ui * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- 选区工具栏 ---------- */
+.dsh-ui-toolbar {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  background: #ffffff;
+  border: 1px solid #e3e6eb;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  user-select: none;
+}
+
+.dsh-ui-toolbar-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4d6bfe;
+  margin-right: 4px;
+  letter-spacing: 0.3px;
+}
+
+.dsh-ui-btn {
+  border: none;
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+  color: #1f2329;
+  background: #f2f3f5;
+}
+
+.dsh-ui-btn:hover {
+  background: #e4e6eb;
+}
+
+.dsh-ui-btn:active {
+  transform: scale(0.96);
+}
+
+.dsh-ui-btn-translate {
+  color: #ffffff;
+  background: #4d6bfe;
+}
+
+.dsh-ui-btn-translate:hover {
+  background: #3d5af0;
+}
+
+.dsh-ui-btn-interpret {
+  color: #ffffff;
+  background: #0fbfa0;
+}
+
+.dsh-ui-btn-interpret:hover {
+  background: #0ca98e;
+}
+
+.dsh-ui-btn-close {
+  padding: 4px 8px;
+  font-size: 13px;
+  color: #8a919f;
+  background: transparent;
+}
+
+.dsh-ui-btn-close:hover {
+  background: #f2f3f5;
+  color: #1f2329;
+}
+
+/* ---------- 结果浮窗 ---------- */
+.dsh-ui-result {
+  position: fixed;
+  width: 360px;
+  max-width: calc(100vw - 16px);
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e3e6eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.dsh-ui-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f1f3;
+  background: #fafbfc;
+  flex-shrink: 0;
+}
+
+.dsh-ui-result-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4d6bfe;
+}
+
+.dsh-ui-result-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dsh-ui-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  color: #4d6bfe;
+  cursor: pointer;
+}
+
+.dsh-ui-link:hover {
+  text-decoration: underline;
+}
+
+.dsh-ui-result-body {
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #1f2329;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: calc(60vh - 40px);
+}
+
+.dsh-ui-result-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dsh-ui-result-body::-webkit-scrollbar-thumb {
+  background: #d4d7dd;
+  border-radius: 3px;
+}
+
+.dsh-ui-error {
+  color: #d64545;
+}
+
+/* ---------- 加载中 ---------- */
+.dsh-ui-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8a919f;
+}
+
+.dsh-ui-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e3e6eb;
+  border-top-color: #4d6bfe;
+  border-radius: 50%;
+  animation: dsh-ui-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dsh-ui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Toast ---------- */
+.dsh-ui-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  padding: 8px 16px;
+  background: rgba(31, 35, 41, 0.92);
+  color: #ffffff;
+  font-size: 13px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* ---------- hidden 属性兜底 ----------
+   .dsh-ui-toolbar / .dsh-ui-result 自身声明了 display:flex，
+   会覆盖浏览器对 hidden 属性的默认 display:none（UA 样式优先级低于作者样式），
+   导致 hidden=true 不生效、UI 无法关闭。这里显式兜底。 */
+.dsh-ui-toolbar[hidden],
+.dsh-ui-result[hidden] {
+  display: none !important;
+}
