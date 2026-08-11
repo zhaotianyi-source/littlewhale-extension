@@ -4,166 +4,380 @@
   <meta charset="UTF-8" />
   <style>
     :root {
-      --primary: #4d6bfe;
-      --primary-hover: #3d5af0;
-      --green: #0fbfa0;
-      --green-hover: #0ca98e;
-      --text: #1f2329;
-      --muted: #8a919f;
-      --border: #e3e6eb;
-      --bg: #fafbfc;
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --text: #111827;
+      --text-2: #4b5563;
+      --muted: #9ca3af;
+      --border: #e5e7eb;
+      --border-soft: #eef0f3;
+      --primary: #4f6bf6;
+      --primary-hover: #3f5aef;
+      --primary-soft: #eef2ff;
+      --green: #0b9f86;
+      --green-hover: #0a8a74;
+      --green-soft: #ecfdf8;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --radius: 8px;
+      --radius-lg: 12px;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       width: 360px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
       font-size: 13px;
       color: var(--text);
-      background: #fff;
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
     }
+
+    /* Header */
     .header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 14px;
-      background: linear-gradient(120deg, #4d6bfe, #0fbfa0);
-      color: #fff;
+      gap: 12px;
+      padding: 16px 16px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-soft);
     }
-    .header img { width: 24px; height: 24px; border-radius: 6px; }
-    .header h1 { font-size: 14px; font-weight: 600; }
-    .header p { font-size: 11px; opacity: 0.85; }
-    .section { padding: 12px 14px; border-bottom: 1px solid #f0f1f3; }
-    .section-title {
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary);
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 22px;
+      height: 22px;
+      display: block;
+      border-radius: 4px;
+    }
+
+    .header h1 {
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .header p {
+      margin-top: 2px;
+      font-size: 11.5px;
       color: var(--muted);
-      margin-bottom: 8px;
-      text-transform: none;
     }
-    .section-title::before {
-      content: '';
-      width: 3px; height: 12px;
-      border-radius: 2px;
-      background: var(--primary);
+
+    /* Sections */
+    .section {
+      margin: 12px 12px 0;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
     }
-    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 7px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s;
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--text);
+      margin-bottom: 12px;
     }
-    input:focus { border-color: var(--primary); }
-    .row { display: flex; gap: 8px; align-items: center; }
-    .row input { flex: 1; }
-    .btn {
-      border: none;
-      border-radius: 8px;
-      padding: 7px 12px;
+
+    .field + .field { margin-top: 12px; }
+
+    label.field-label {
+      display: block;
       font-size: 12px;
       font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+      width: 100%;
+      height: 36px;
+      padding: 0 11px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder { color: #c4c9d4; }
+
+    input:hover,
+    select:hover { border-color: #d1d5db; }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 107, 246, 0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 11px center;
+      padding-right: 30px;
+      cursor: pointer;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .row input { flex: 1; min-width: 0; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       color: #fff;
       background: var(--primary);
-      transition: background 0.15s, transform 0.05s;
+      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
       white-space: nowrap;
     }
+
     .btn:hover { background: var(--primary-hover); }
-    .btn:active { transform: scale(0.97); }
-    .btn.green { background: var(--green); }
-    .btn.green:hover { background: var(--green-hover); }
-    .btn.ghost {
-      background: #f2f3f5;
-      color: var(--text);
+    .btn:active { transform: translateY(0.5px); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn.green {
+      background: var(--green);
     }
-    .btn.ghost:hover { background: #e4e6eb; }
-    .btn.small { padding: 5px 10px; font-size: 12px; }
-    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-    .status { font-size: 12px; margin-top: 6px; min-height: 16px; }
-    .status.ok { color: var(--green); }
-    .status.err { color: #d64545; }
-    .hint { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+    .btn.green:hover { background: var(--green-hover); }
+
+    .btn.ghost {
+      background: var(--surface);
+      color: var(--text-2);
+      border-color: var(--border);
+      font-weight: 550;
+    }
+    .btn.ghost:hover {
+      background: #f9fafb;
+      color: var(--text);
+      border-color: #d1d5db;
+    }
+
+    /* Safe mode */
+    .safe-mode {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px 11px;
+      border-radius: var(--radius);
+      background: #f9fafb;
+      border: 1px solid var(--border-soft);
+      cursor: pointer;
+      color: var(--text-2);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .safe-mode:hover { background: #f3f4f6; }
+
+    .safe-mode input {
+      margin-top: 2px;
+      accent-color: var(--primary);
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* Status */
+    .status {
+      font-size: 12px;
+      margin-top: 10px;
+      min-height: 16px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .status.ok {
+      color: var(--green);
+      background: var(--green-soft);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-weight: 500;
+    }
+
+    .status.err {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-weight: 500;
+    }
+
+    .hint {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
     .hint code {
-      background: #f2f3f5;
-      padding: 1px 4px;
+      background: #f3f4f6;
+      color: var(--text-2);
+      padding: 1px 5px;
       border-radius: 4px;
       font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       word-break: break-all;
     }
-    .help { padding: 10px 14px; }
-    .help ul { padding-left: 16px; }
-    .help li { font-size: 12px; color: var(--muted); line-height: 1.8; }
-    .footer { padding: 10px 14px; text-align: center; color: #b6bcc7; font-size: 11px; }
+
+    .hint a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .hint a:hover { text-decoration: underline; }
+
+    /* Help */
+    .help {
+      margin: 12px 12px 0;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+    }
+
+    .help ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .help li {
+      position: relative;
+      padding-left: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .help li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #d1d5db;
+    }
+
+    .footer {
+      padding: 14px 16px 16px;
+      text-align: center;
+      color: #c4c9d4;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <img src="icons/icon48.png" alt="logo" />
+    <div class="logo">
+      <img src="icons/icon48.png" alt="" />
+    </div>
     <div>
       <h1>小鲸鱼助手 LittleWhale</h1>
       <p>选中文本 → DeepSeek 翻译 / 解读</p>
     </div>
   </div>
 
-  <!-- ① DeepSeek 配置 -->
   <div class="section">
     <div class="section-title">DeepSeek API 配置</div>
-    <label for="apiKey">API Key（粘贴后自动保存，存储在本机浏览器中）</label>
-    <div class="row">
-      <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off" />
-      <button class="btn ghost small" id="toggleKey">显示</button>
-    </div>
-    <div class="row" style="margin-top:8px;">
-      <button class="btn small" id="saveKey">立即保存</button>
-      <button class="btn green small" id="testKey">测试连接</button>
-    </div>
-    <label style="margin-top:8px; display:flex; align-items:center; gap:6px; cursor:pointer; color:var(--text);">
-      <input type="checkbox" id="safeMode" />
-      <span>安全模式：Key 仅保存在内存，不写入磁盘（重启浏览器后需重新输入）</span>
-    </label>
-    <div class="status" id="keyStatus"></div>
-    <div class="hint">
-      在 <code>platform.deepseek.com</code> 创建 API Key。保存后可关闭本弹窗，直接在网页里选中文字使用。
+    <div class="field">
+      <label class="field-label" for="apiKey">API Key（粘贴后自动保存）</label>
+      <div class="row">
+        <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off" />
+        <button class="btn ghost" id="toggleKey" type="button">显示</button>
+      </div>
+      <div class="actions">
+        <button class="btn" id="saveKey" type="button">立即保存</button>
+        <button class="btn green" id="testKey" type="button">测试连接</button>
+      </div>
+      <label class="safe-mode" for="safeMode">
+        <input type="checkbox" id="safeMode" />
+        <span>安全模式：Key 仅保存在内存，不写入磁盘（重启浏览器后需重新输入）</span>
+      </label>
+      <div class="status" id="keyStatus"></div>
+      <div class="hint">
+        在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer">platform.deepseek.com</a>
+        创建 API Key。保存后可关闭弹窗，直接在网页选中文字使用。
+      </div>
     </div>
   </div>
 
-  <!-- ② 模型设置 -->
   <div class="section">
     <div class="section-title">模型设置</div>
-    <label for="model">模型</label>
-    <input type="text" id="model" list="modelList" />
-    <datalist id="modelList">
-      <option value="deepseek-v4-flash"></option>
-      <option value="deepseek-v4-pro"></option>
-      <option value="deepseek-chat"></option>
-      <option value="deepseek-reasoner"></option>
-    </datalist>
-    <label for="effort" style="margin-top:8px;">智能水平（思考强度）</label>
-    <select id="effort" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; outline:none;">
-      <option value="max">Max（最强推理，最慢）</option>
-      <option value="high">High（较高，更快）</option>
-      <option value="low">Low（低，最快）</option>
-    </select>
+    <div class="field">
+      <label class="field-label" for="model">模型</label>
+      <input type="text" id="model" list="modelList" />
+      <datalist id="modelList">
+        <option value="deepseek-v4-flash"></option>
+        <option value="deepseek-v4-pro"></option>
+        <option value="deepseek-chat"></option>
+        <option value="deepseek-reasoner"></option>
+      </datalist>
+    </div>
+    <div class="field">
+      <label class="field-label" for="effort">智能水平（思考强度）</label>
+      <select id="effort">
+        <option value="max">Max（最强推理，最慢）</option>
+        <option value="high">High（较高，更快）</option>
+        <option value="low">Low（低，最快）</option>
+      </select>
+    </div>
     <div class="status" id="modelStatus"></div>
     <div class="hint">
-      v4 系列模型思考模式默认开启；「智能水平」对应 <code>reasoning_effort</code> 参数，修改后自动保存。
+      v4 系列思考模式默认开启；「智能水平」对应 <code>reasoning_effort</code>，修改后自动保存。
     </div>
   </div>
 
   <div class="help">
     <ul>
-      <li>在任意网页选中文字，即可弹出「翻译 / 解读」按钮</li>
+      <li>在任意网页选中文字，即可弹出「翻译 / 解读」</li>
       <li>API Key 仅保存在本机，不会上传到其它服务器</li>
     </ul>
   </div>
 
-  <div class="footer">小鲸鱼助手 LittleWhale v1.2.0</div>
+  <div class="footer">小鲸鱼助手 LittleWhale · v1.3.0</div>
 
   <script src="popup.js"></script>
 </body>

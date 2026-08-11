@@ -1,92 +1,155 @@
-/* DeepSeek 助手 —— 注入页面的 UI 样式 */
+/* 小鲸鱼助手 LittleWhale —— 页面注入 UI */
+
 .dsh-ui {
   all: initial;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 2147483647;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   font-size: 13px;
   line-height: 1.5;
-  color: #1f2329;
+  color: #111827;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.dsh-ui * {
+.dsh-ui *,
+.dsh-ui *::before,
+.dsh-ui *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* ---------- 选区工具栏 ---------- */
+/* ---------- 选区工具栏：紧凑浮层菜单 ---------- */
 .dsh-ui-toolbar {
   position: fixed;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
-  background: #ffffff;
-  border: 1px solid #e3e6eb;
+  gap: 2px;
+  height: 36px;
+  padding: 3px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 8px 24px rgba(17, 24, 39, 0.1);
   user-select: none;
+  animation: dsh-ui-in 0.14s ease-out;
 }
 
-.dsh-ui-toolbar-title {
+@keyframes dsh-ui-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dsh-ui-toolbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 8px 0 7px;
+  margin-right: 1px;
+  color: #6b7280;
   font-size: 11px;
   font-weight: 600;
-  color: #4d6bfe;
-  margin-right: 4px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.dsh-ui-toolbar-brand-mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: #4f6bf6;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dsh-ui-toolbar-sep {
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 3px;
+  flex-shrink: 0;
 }
 
 .dsh-ui-btn {
   border: none;
+  height: 28px;
+  padding: 0 11px;
   border-radius: 7px;
-  padding: 4px 12px;
   font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1;
   cursor: pointer;
-  transition: background 0.15s, transform 0.05s;
-  color: #1f2329;
-  background: #f2f3f5;
+  color: #374151;
+  background: transparent;
+  transition: background 0.12s ease, color 0.12s ease;
+  white-space: nowrap;
 }
 
 .dsh-ui-btn:hover {
-  background: #e4e6eb;
+  background: #f3f4f6;
+  color: #111827;
 }
 
 .dsh-ui-btn:active {
-  transform: scale(0.96);
+  background: #e5e7eb;
 }
 
 .dsh-ui-btn-translate {
-  color: #ffffff;
-  background: #4d6bfe;
+  color: #3b57e8;
 }
 
 .dsh-ui-btn-translate:hover {
-  background: #3d5af0;
+  background: #eef2ff;
+  color: #2f46d0;
 }
 
 .dsh-ui-btn-interpret {
-  color: #ffffff;
-  background: #0fbfa0;
+  color: #0b9f86;
 }
 
 .dsh-ui-btn-interpret:hover {
-  background: #0ca98e;
+  background: #ecfdf8;
+  color: #0a8a74;
 }
 
 .dsh-ui-btn-close {
-  padding: 4px 8px;
-  font-size: 13px;
-  color: #8a919f;
-  background: transparent;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  border-radius: 7px;
 }
 
 .dsh-ui-btn-close:hover {
-  background: #f2f3f5;
-  color: #1f2329;
+  background: #f3f4f6;
+  color: #4b5563;
 }
 
 /* ---------- 结果浮窗 ---------- */
@@ -97,56 +160,107 @@
   max-height: 60vh;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #e3e6eb;
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 12px 32px rgba(17, 24, 39, 0.12);
   overflow: hidden;
+  animation: dsh-ui-in 0.16s ease-out;
 }
 
 .dsh-ui-result-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  gap: 12px;
+  min-height: 42px;
+  padding: 0 8px 0 14px;
   border-bottom: 1px solid #f0f1f3;
-  background: #fafbfc;
   flex-shrink: 0;
 }
 
 .dsh-ui-result-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 600;
-  color: #4d6bfe;
+  color: #111827;
+}
+
+.dsh-ui-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.dsh-ui-badge-translate {
+  background: #eef2ff;
+  color: #3b57e8;
+}
+
+.dsh-ui-badge-interpret {
+  background: #ecfdf8;
+  color: #0b9f86;
+}
+
+.dsh-ui-badge-error {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .dsh-ui-result-actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 2px;
 }
 
 .dsh-ui-link {
   border: none;
-  background: none;
-  padding: 0;
+  background: transparent;
+  height: 28px;
+  padding: 0 10px;
   font-size: 12px;
-  color: #4d6bfe;
+  font-weight: 500;
+  font-family: inherit;
+  color: #6b7280;
   cursor: pointer;
+  border-radius: 7px;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
 .dsh-ui-link:hover {
-  text-decoration: underline;
+  background: #f3f4f6;
+  color: #111827;
+  text-decoration: none;
+}
+
+.dsh-ui-link[data-action='copy'] {
+  color: #3b57e8;
+}
+
+.dsh-ui-link[data-action='copy']:hover {
+  background: #eef2ff;
+  color: #2f46d0;
 }
 
 .dsh-ui-result-body {
-  padding: 10px 12px;
-  font-size: 13px;
+  padding: 14px 16px 16px;
+  font-size: 13.5px;
   line-height: 1.7;
-  color: #1f2329;
+  color: #1f2937;
   overflow-y: auto;
-  white-space: pre-wrap;
   word-break: break-word;
-  max-height: calc(60vh - 40px);
+  max-height: calc(60vh - 42px);
 }
 
 .dsh-ui-result-body::-webkit-scrollbar {
@@ -154,30 +268,255 @@
 }
 
 .dsh-ui-result-body::-webkit-scrollbar-thumb {
-  background: #d4d7dd;
+  background: #d1d5db;
   border-radius: 3px;
 }
 
-.dsh-ui-error {
-  color: #d64545;
+.dsh-ui-result-body::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
-/* ---------- 加载中 ---------- */
+/* ---------- Markdown 正文 ---------- */
+.dsh-ui-md {
+  white-space: normal;
+}
+
+.dsh-ui-md > :first-child {
+  margin-top: 0;
+}
+
+.dsh-ui-md > :last-child {
+  margin-bottom: 0;
+}
+
+.dsh-ui-md p {
+  margin: 0 0 0.75em;
+}
+
+.dsh-ui-md .dsh-ui-h1,
+.dsh-ui-md .dsh-ui-h2,
+.dsh-ui-md .dsh-ui-h3,
+.dsh-ui-md .dsh-ui-h4 {
+  color: #111827;
+  font-weight: 650;
+  line-height: 1.35;
+  margin: 1.1em 0 0.45em;
+}
+
+.dsh-ui-md .dsh-ui-h1 { font-size: 1.2em; }
+.dsh-ui-md .dsh-ui-h2 { font-size: 1.1em; }
+.dsh-ui-md .dsh-ui-h3 { font-size: 1.02em; }
+.dsh-ui-md .dsh-ui-h4 { font-size: 1em; color: #374151; }
+
+.dsh-ui-md .dsh-ui-list {
+  margin: 0.35em 0 0.85em;
+  padding-left: 1.35em;
+}
+
+.dsh-ui-md .dsh-ui-list li {
+  margin: 0.25em 0;
+  padding-left: 0.15em;
+}
+
+.dsh-ui-md .dsh-ui-list li::marker {
+  color: #9ca3af;
+}
+
+.dsh-ui-md ul.dsh-ui-list {
+  list-style: disc;
+}
+
+.dsh-ui-md ol.dsh-ui-list {
+  list-style: decimal;
+}
+
+.dsh-ui-md .dsh-ui-list-nested {
+  margin: 0.25em 0 0.35em;
+  padding-left: 1.2em;
+}
+
+.dsh-ui-md li.dsh-ui-task {
+  list-style: none;
+  margin-left: -0.35em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.dsh-ui-md .dsh-ui-task-box {
+  width: 13px;
+  height: 13px;
+  margin-top: 4px;
+  border: 1.5px solid #c4c9d4;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.dsh-ui-md li.dsh-ui-task.is-checked .dsh-ui-task-box {
+  border-color: #4f6bf6;
+  background: #4f6bf6;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.dsh-ui-md .dsh-ui-strong {
+  font-weight: 650;
+  color: #111827;
+}
+
+.dsh-ui-md .dsh-ui-em {
+  font-style: italic;
+  color: #374151;
+}
+
+.dsh-ui-md .dsh-ui-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: #f3f4f6;
+  color: #1f2937;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.dsh-ui-md .dsh-ui-pre {
+  margin: 0.55em 0 0.9em;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.dsh-ui-md .dsh-ui-pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #1f2937;
+  white-space: pre;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.dsh-ui-md .dsh-ui-code-lang {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
+.dsh-ui-md .dsh-ui-quote {
+  margin: 0.55em 0 0.9em;
+  padding: 6px 0 6px 12px;
+  border-left: 3px solid #c7d2fe;
+  color: #4b5563;
+  background: #f8fafc;
+  border-radius: 0 6px 6px 0;
+}
+
+.dsh-ui-md .dsh-ui-hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 0.9em 0;
+}
+
+.dsh-ui-md .dsh-ui-md-a {
+  color: #3b57e8;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(59, 87, 232, 0.25);
+}
+
+.dsh-ui-md .dsh-ui-md-a:hover {
+  border-bottom-color: #3b57e8;
+}
+
+.dsh-ui-md .dsh-ui-table-wrap {
+  margin: 0.55em 0 0.9em;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.dsh-ui-md .dsh-ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.dsh-ui-md .dsh-ui-table th,
+.dsh-ui-md .dsh-ui-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #eef0f3;
+  text-align: left;
+  vertical-align: top;
+}
+
+.dsh-ui-md .dsh-ui-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.dsh-ui-md .dsh-ui-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dsh-ui-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ---------- 加载态：完整卡片，避免空荡 ---------- */
+.dsh-ui-result.is-loading .dsh-ui-result-head {
+  border-bottom: none;
+}
+
 .dsh-ui-loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  color: #8a919f;
+  justify-content: center;
+  gap: 12px;
+  min-height: 112px;
+  padding: 8px 20px 28px;
+  text-align: center;
 }
 
 .dsh-ui-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid #e3e6eb;
-  border-top-color: #4d6bfe;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #4f6bf6;
   border-radius: 50%;
-  animation: dsh-ui-spin 0.8s linear infinite;
+  animation: dsh-ui-spin 0.7s linear infinite;
   flex-shrink: 0;
+}
+
+.dsh-ui-loading-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dsh-ui-loading-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dsh-ui-loading-sub {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 400;
 }
 
 @keyframes dsh-ui-spin {
@@ -189,17 +528,20 @@
 /* ---------- Toast ---------- */
 .dsh-ui-toast {
   position: fixed;
-  top: 16px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2147483647;
-  padding: 8px 16px;
-  background: rgba(31, 35, 41, 0.92);
-  color: #ffffff;
-  font-size: 13px;
+  padding: 8px 14px;
+  background: #111827;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 500;
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  animation: dsh-ui-in 0.14s ease-out;
 }
 
 /* ---------- hidden 属性兜底 ----------
