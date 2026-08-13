@@ -54,9 +54,12 @@
   }
 
   // ---------- 工具栏 ----------
+  // 容器使用非模态 <dialog>（show() 不拦截交互、无遮罩、不劫持焦点），
+  // 目的：让浮层进入浏览器 top layer，压过页面自身弹窗/模态框（如 GitHub 的 Dialog）。
+  // 显隐仍由内部元素的 hidden 属性控制，dialog 的 open/close 仅作「顶层开关」。
   function ensureToolbar() {
     if (toolbar) return toolbar;
-    toolbar = document.createElement('div');
+    toolbar = document.createElement('dialog');
     toolbar.className = UI_PREFIX;
     toolbar.innerHTML = `
       <div class="${UI_PREFIX}-toolbar" hidden>
@@ -71,8 +74,9 @@
         <button class="${UI_PREFIX}-btn ${UI_PREFIX}-btn-close" title="关闭" data-action="close" aria-label="关闭">×</button>
       </div>
       <div class="${UI_PREFIX}-result" hidden></div>
+      <div class="${UI_PREFIX}-toast" role="status" style="display:none"></div>
     `;
-    document.documentElement.appendChild(toolbar);
+    (document.body || document.documentElement).appendChild(toolbar);
     toolbar.addEventListener('click', (e) => {
       const btn = e.target.closest('button');
       if (!btn) return;
@@ -86,10 +90,27 @@
     return toolbar;
   }
 
+  function openDialog() {
+    if (!toolbar || toolbar.open) return;
+    toolbar.show();
+  }
+
+  // 工具栏、结果卡、toast 全部隐藏时，退出 top layer
+  function syncDialog() {
+    if (!toolbar || !toolbar.open) return;
+    const bar = toolbar.querySelector(`.${UI_PREFIX}-toolbar`);
+    const box = toolbar.querySelector(`.${UI_PREFIX}-result`);
+    const toast = toolbar.querySelector(`.${UI_PREFIX}-toast`);
+    const anyVisible =
+      (bar && !bar.hidden) || (box && !box.hidden) || (toast && toast.style.display !== 'none');
+    if (!anyVisible) toolbar.close();
+  }
+
   function showToolbar(rect) {
     // 结果卡片打开时不再弹出选区工具栏，避免与加载/结果叠层
     if (isResultOpen()) return;
     const bar = ensureToolbar().querySelector(`.${UI_PREFIX}-toolbar`);
+    openDialog();
     bar.hidden = false;
     bar.style.left = '0px';
     bar.style.top = '0px';
@@ -116,6 +137,7 @@
     const bar = toolbar.querySelector(`.${UI_PREFIX}-toolbar`);
     bar.hidden = true;
     lastSelection = null;
+    syncDialog();
   }
 
   // ---------- 结果浮窗 ----------
@@ -181,6 +203,7 @@
   function showResult(rect, mode, text) {
     const meta = modeMeta(mode);
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
+    openDialog();
     box.classList.remove('is-loading');
     box.innerHTML = `
       <div class="${UI_PREFIX}-result-head">
@@ -209,6 +232,7 @@
       box.innerHTML = '';
     }
     isRequesting = false;
+    syncDialog();
   }
 
   function flashText(el, text) {
@@ -550,6 +574,7 @@
     hideToolbar();
 
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
+    openDialog();
     const meta = modeMeta(mode);
     box.classList.add('is-loading');
     box.innerHTML = `
@@ -602,6 +627,7 @@
 
   function showError(rect, message) {
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
+    openDialog();
     box.classList.remove('is-loading');
     box.innerHTML = `
       <div class="${UI_PREFIX}-result-head">
@@ -622,18 +648,16 @@
   }
 
   // ---------- Toast ----------
-  let toastEl = null;
+  // Toast 也放在 dialog 容器内，同样渲染在 top layer
   function showToast(msg) {
-    if (!toastEl) {
-      toastEl = document.createElement('div');
-      toastEl.className = `${UI_PREFIX}-toast`;
-      document.documentElement.appendChild(toastEl);
-    }
-    toastEl.textContent = msg;
-    toastEl.style.display = 'block';
+    const el = ensureToolbar().querySelector(`.${UI_PREFIX}-toast`);
+    openDialog();
+    el.textContent = msg;
+    el.style.display = 'block';
     clearTimeout(showToast._t);
     showToast._t = setTimeout(() => {
-      toastEl.style.display = 'none';
+      el.style.display = 'none';
+      syncDialog();
     }, 1800);
   }
 

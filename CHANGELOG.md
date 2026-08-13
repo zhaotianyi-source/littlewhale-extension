@@ -2,6 +2,11 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格，版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.3.1] - 2026-08-11
+
+### 修复
+- 修复浮层被页面自身弹窗压住的问题（如 GitHub 的 Dialog）：浮层容器改用非模态 `<dialog>`，通过 `show()` 进入浏览器 top layer，压过任何仅靠 z-index 的页面元素；工具栏/结果卡/toast 全部隐藏时自动退出 top layer
+
 ## [1.3.0] - 2026-08-11
 
 ### 新增

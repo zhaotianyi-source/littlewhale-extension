@@ -1,10 +1,19 @@
 /* 小鲸鱼助手 LittleWhale —— 页面注入 UI */
 
+/* 容器为非模态 <dialog>：借助 show() 进入浏览器 top layer，
+   压过页面自身弹窗（如 GitHub 的 Dialog，top layer 无视 z-index）。 */
 .dsh-ui {
   all: initial;
   position: fixed;
   top: 0;
   left: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
   z-index: 2147483647;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
     'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
