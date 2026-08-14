@@ -1,7 +1,7 @@
 /* 小鲸鱼助手 LittleWhale —— 页面注入 UI */
 
-/* 容器为非模态 <dialog>：借助 show() 进入浏览器 top layer，
-   压过页面自身弹窗（如 GitHub 的 Dialog，top layer 无视 z-index）。 */
+/* 容器为手动 popover：通过 showPopover() 进入浏览器 top layer，
+   实测可压过页面模态框（如 GitHub 的 Dialog，top layer 无视 z-index）。 */
 .dsh-ui {
   all: initial;
   position: fixed;
@@ -22,6 +22,11 @@
   color: #111827;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* 未打开的 popover 强制隐藏（兜底：避免 all:initial 覆盖 UA 的 :not(:popover-open) 规则） */
+.dsh-ui[popover]:not(:popover-open) {
+  display: none !important;
 }
 
 .dsh-ui *,

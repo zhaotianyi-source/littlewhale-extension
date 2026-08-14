@@ -29,7 +29,7 @@ _待补充：将截图放入 `docs/screenshots/` 后在此引用（如 `docs/scr
 
 ## 📦 安装
 
-**要求**：Chrome（或 Chromium 内核浏览器）≥ 102（依赖 `chrome.storage.session`）。
+**要求**：Chrome（或 Chromium 内核浏览器）≥ 114（依赖 Popover API 与 `chrome.storage.session`）。
 
 1. 打开 `chrome://extensions/`
 2. 开启右上角 **开发者模式**

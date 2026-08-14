@@ -27,24 +27,13 @@ function setup(sendMessageImpl) {
   const { window } = dom;
   const { document } = window;
 
-  // jsdom 未实现 HTMLDialogElement，polyfill 最小行为：
-  // open 属性（映射 open 属性）+ show()/close()（top layer 开关）
-  Object.defineProperty(window.HTMLDialogElement.prototype, 'open', {
-    get() {
-      return this.hasAttribute('open');
-    },
-    set(v) {
-      if (v) this.setAttribute('open', '');
-      else this.removeAttribute('open');
-    },
-    configurable: true,
-  });
-  window.HTMLDialogElement.prototype.show = function () {
-    if (this.open) return;
-    this.setAttribute('open', '');
+  // jsdom 未实现 popover API，polyfill 最小行为：
+  // showPopover()/hidePopover()（top layer 开关，映射 popover-open 属性）
+  window.HTMLElement.prototype.showPopover = function () {
+    this.setAttribute('popover-open', '');
   };
-  window.HTMLDialogElement.prototype.close = function () {
-    this.removeAttribute('open');
+  window.HTMLElement.prototype.hidePopover = function () {
+    this.removeAttribute('popover-open');
   };
 
   const style = document.createElement('style');
@@ -105,7 +94,7 @@ const p = document.getElementById('p');
 const sel = window.getSelection();
 const toolbar = () => document.querySelector('.dsh-ui-toolbar');
 const result = () => document.querySelector('.dsh-ui-result');
-const dialog = () => document.querySelector('dialog.dsh-ui');
+const dialog = () => document.querySelector('.dsh-ui[popover]');
 
 const range = document.createRange();
 range.selectNodeContents(p);
@@ -119,7 +108,7 @@ function selectText() {
 // 1. 选中 → 工具栏
 selectText();
 check('选中文字后工具栏出现 (hidden=false)', toolbar() && toolbar().hidden === false);
-check('工具栏可见时 dialog 进入 top layer (open=true)', dialog() && dialog().open === true);
+check('工具栏可见时 dialog 进入 top layer (open=true)', dialog() && dialog().hasAttribute('popover-open'));
 
 // 2. hidden 显示回归
 toolbar().hidden = true;
@@ -130,7 +119,7 @@ check('工具栏 hidden=false 后 computed display=flex', window.getComputedStyl
 // 3. 点击空白 → 工具栏消失
 document.getElementById('outside').dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
 check('点击页面其它位置后工具栏消失 (hidden=true)', toolbar().hidden === true);
-check('全部隐藏后 dialog 退出 top layer (open=false)', dialog() && dialog().open === false);
+check('全部隐藏后 dialog 退出 top layer (open=false)', dialog() && !dialog().hasAttribute('popover-open'));
 
 // 4. × 关闭工具栏
 selectText();
@@ -153,7 +142,7 @@ setTimeout(() => {
     '点击翻译后结果浮窗出现',
     box && box.hidden === false && box.textContent.includes('这是译文结果')
   );
-  check('结果卡可见时 dialog 保持 top layer (open=true)', dialog() && dialog().open === true);
+  check('结果卡可见时 dialog 保持 top layer (open=true)', dialog() && dialog().hasAttribute('popover-open'));
 
   // 加载开始应已隐藏工具栏
   check('发起请求后选区工具栏已隐藏', toolbar().hidden === true);
@@ -206,7 +195,7 @@ setTimeout(() => {
     new window.MouseEvent('click', { bubbles: true, cancelable: true })
   );
   check('点击结果浮窗关闭后消失 (hidden=true)', box.hidden === true);
-  check('结果卡关闭后 dialog 退出 top layer (open=false)', dialog() && dialog().open === false);
+  check('结果卡关闭后 dialog 退出 top layer (open=false)', dialog() && !dialog().hasAttribute('popover-open'));
 
   // 5d. 加载中点取消 → 应发送 deepseek-abort
   const abortCallsBefore = calls.filter((c) => c && c.type === 'deepseek-abort').length;
@@ -257,12 +246,15 @@ setTimeout(() => {
   check('content.js 包含 requestSeq 竞态防护', /requestSeq/.test(code));
   check('content.js 包含 Markdown 渲染实现', /function renderMarkdown\s*\(/.test(code));
   check(
-    'content.js 使用 dialog 顶层层渲染（压过页面弹窗）',
-    /createElement\('dialog'\)/.test(code) && /\.show\(\)/.test(code) && /syncDialog/.test(code)
+    'content.js 使用 popover 顶层层渲染（压过页面模态框）',
+    /setAttribute\('popover', 'manual'\)/.test(code) &&
+      /showPopover/.test(code) &&
+      /exitTopLayer/.test(code)
   );
   check(
-    'content.css 声明 dialog 容器样式（无边框/透明/零尺寸）',
-    /\.dsh-ui\s*\{[\s\S]*?border:\s*none[\s\S]*?background:\s*transparent/.test(CSS)
+    'content.css 声明 popover 容器样式（零尺寸/透明 + 关闭态隐藏兜底）',
+    /\.dsh-ui\s*\{[\s\S]*?border:\s*none[\s\S]*?background:\s*transparent/.test(CSS) &&
+      /\[popover\]:not\(:popover-open\)[\s\S]*?display:\s*none\s*!important/.test(CSS)
   );
   check('background 支持 abort', /deepseek-abort/.test(fs.readFileSync(path.join(ROOT, 'background.js'), 'utf8')));
 

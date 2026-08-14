@@ -1,10 +1,14 @@
 {
   "manifest_version": 3,
   "name": "小鲸鱼助手 LittleWhale",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "小鲸鱼助手：选中网页文本即可调用 DeepSeek 翻译或解读。",
-  "permissions": ["storage"],
-  "host_permissions": ["https://api.deepseek.com/*"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://api.deepseek.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
@@ -26,10 +30,17 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["content.css"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "minimum_chrome_version": "114"
 }

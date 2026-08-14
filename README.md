@@ -29,7 +29,7 @@ _Coming soon — add your screenshots to `docs/screenshots/` and reference them 
 
 ## 📦 Installation
 
-**Requirements**: Chrome (or Chromium-based browser) ≥ 102 (uses `chrome.storage.session`).
+**Requirements**: Chrome (or Chromium-based browser) ≥ 114 (uses the Popover API and `chrome.storage.session`).
 
 1. Open `chrome://extensions/`
 2. Enable **Developer mode** (top-right corner)

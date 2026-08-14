@@ -2,10 +2,21 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 风格，版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.3.2] - 2026-08-14
+
+### 修复
+- 真正修复浮层被页面模态框压住的问题（如 GitHub 的 Dialog）：容器改用手动 `popover`（`showPopover()`）进入浏览器 top layer。实测 Chrome 中 popover 可以压过页面模态框，而非模态 `<dialog>` 始终被模态框压住（1.3.1 方案无效）
+- 浮层已在 top layer 时再次弹出会先收起再打开，保证始终位于 top layer 末尾（页面后续新弹窗之上）
+- 无 popover 支持的旧浏览器（< 114）自动降级为 z-index 方案
+
+### 变更
+- `minimum_chrome_version` 提升至 114（Popover API）
+
 ## [1.3.1] - 2026-08-11
 
 ### 修复
 - 修复浮层被页面自身弹窗压住的问题（如 GitHub 的 Dialog）：浮层容器改用非模态 `<dialog>`，通过 `show()` 进入浏览器 top layer，压过任何仅靠 z-index 的页面元素；工具栏/结果卡/toast 全部隐藏时自动退出 top layer
+- 注：该方案经实测在 Chrome 中仍压不过页面模态框，已由 1.3.2 的 popover 方案取代
 
 ## [1.3.0] - 2026-08-11
 

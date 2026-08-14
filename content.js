@@ -13,6 +13,10 @@
   let lastSelection = null; // { text, rect }：工具栏弹出时缓存
   let requestSeq = 0; // 请求代次：取消/新请求时递增，丢弃过期响应
   let activeRequestId = ''; // 与 background AbortController 对应
+  let uiInTopLayer = false; // 容器 popover 是否处于浏览器 top layer
+  // popover API 需要 Chrome 114+；旧版本降级为普通 z-index 方案
+  const hasPopover =
+    typeof HTMLElement !== 'undefined' && typeof HTMLElement.prototype.showPopover === 'function';
 
   // ---------- 工具函数 ----------
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
@@ -54,13 +58,15 @@
   }
 
   // ---------- 工具栏 ----------
-  // 容器使用非模态 <dialog>（show() 不拦截交互、无遮罩、不劫持焦点），
-  // 目的：让浮层进入浏览器 top layer，压过页面自身弹窗/模态框（如 GitHub 的 Dialog）。
-  // 显隐仍由内部元素的 hidden 属性控制，dialog 的 open/close 仅作「顶层开关」。
+  // 容器使用手动 popover（popover="manual" + showPopover()）进入浏览器 top layer：
+  // 实测 Chrome 中 popover 可以压过页面自身模态框（非模态 <dialog> 反而压不过）。
+  // popover 无遮罩、不劫持焦点、不拦截外部交互；manual 模式不受 Esc/点击空白影响。
+  // 显隐仍由内部元素的 hidden 属性控制，popover 的显示/隐藏仅作「顶层开关」。
   function ensureToolbar() {
     if (toolbar) return toolbar;
-    toolbar = document.createElement('dialog');
+    toolbar = document.createElement('div');
     toolbar.className = UI_PREFIX;
+    toolbar.setAttribute('popover', 'manual');
     toolbar.innerHTML = `
       <div class="${UI_PREFIX}-toolbar" hidden>
         <span class="${UI_PREFIX}-toolbar-brand">
@@ -90,27 +96,37 @@
     return toolbar;
   }
 
-  function openDialog() {
-    if (!toolbar || toolbar.open) return;
-    toolbar.show();
+  // 进入 top layer。若已在其中，先收起再打开，保证位于 top layer 末尾
+  // （页面稍后弹出的对话框之上），两次操作同帧完成无闪烁。
+  function enterTopLayer() {
+    if (!toolbar || !hasPopover) return;
+    if (uiInTopLayer) {
+      toolbar.hidePopover();
+      uiInTopLayer = false;
+    }
+    toolbar.showPopover();
+    uiInTopLayer = true;
   }
 
   // 工具栏、结果卡、toast 全部隐藏时，退出 top layer
-  function syncDialog() {
-    if (!toolbar || !toolbar.open) return;
+  function exitTopLayer() {
+    if (!toolbar || !uiInTopLayer || !hasPopover) return;
     const bar = toolbar.querySelector(`.${UI_PREFIX}-toolbar`);
     const box = toolbar.querySelector(`.${UI_PREFIX}-result`);
     const toast = toolbar.querySelector(`.${UI_PREFIX}-toast`);
     const anyVisible =
       (bar && !bar.hidden) || (box && !box.hidden) || (toast && toast.style.display !== 'none');
-    if (!anyVisible) toolbar.close();
+    if (!anyVisible) {
+      toolbar.hidePopover();
+      uiInTopLayer = false;
+    }
   }
 
   function showToolbar(rect) {
     // 结果卡片打开时不再弹出选区工具栏，避免与加载/结果叠层
     if (isResultOpen()) return;
     const bar = ensureToolbar().querySelector(`.${UI_PREFIX}-toolbar`);
-    openDialog();
+    enterTopLayer();
     bar.hidden = false;
     bar.style.left = '0px';
     bar.style.top = '0px';
@@ -137,7 +153,7 @@
     const bar = toolbar.querySelector(`.${UI_PREFIX}-toolbar`);
     bar.hidden = true;
     lastSelection = null;
-    syncDialog();
+    exitTopLayer();
   }
 
   // ---------- 结果浮窗 ----------
@@ -203,7 +219,7 @@
   function showResult(rect, mode, text) {
     const meta = modeMeta(mode);
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
-    openDialog();
+    enterTopLayer();
     box.classList.remove('is-loading');
     box.innerHTML = `
       <div class="${UI_PREFIX}-result-head">
@@ -232,7 +248,7 @@
       box.innerHTML = '';
     }
     isRequesting = false;
-    syncDialog();
+    exitTopLayer();
   }
 
   function flashText(el, text) {
@@ -574,7 +590,7 @@
     hideToolbar();
 
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
-    openDialog();
+    enterTopLayer();
     const meta = modeMeta(mode);
     box.classList.add('is-loading');
     box.innerHTML = `
@@ -627,7 +643,7 @@
 
   function showError(rect, message) {
     const box = ensureToolbar().querySelector(`.${UI_PREFIX}-result`);
-    openDialog();
+    enterTopLayer();
     box.classList.remove('is-loading');
     box.innerHTML = `
       <div class="${UI_PREFIX}-result-head">
@@ -651,13 +667,13 @@
   // Toast 也放在 dialog 容器内，同样渲染在 top layer
   function showToast(msg) {
     const el = ensureToolbar().querySelector(`.${UI_PREFIX}-toast`);
-    openDialog();
+    enterTopLayer();
     el.textContent = msg;
     el.style.display = 'block';
     clearTimeout(showToast._t);
     showToast._t = setTimeout(() => {
       el.style.display = 'none';
-      syncDialog();
+      exitTopLayer();
     }, 1800);
   }
 
